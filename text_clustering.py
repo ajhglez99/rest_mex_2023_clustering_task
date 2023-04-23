@@ -38,6 +38,11 @@ def text_clustering(df, X):
     x0 = pca_vecs[:, 0]
     x1 = pca_vecs[:, 1]
 
+    # assign clusters and PCA vectors to columns in the original dataframe
+    df['cluster'] = clusters
+    df['x0'] = x0
+    df['x1'] = x1
+
     # map clusters to appropriate labels
     cluster_map = {0: "1", 1: "2", 2: "3", 3: "4", 4: "5"}
     # apply mapping
@@ -50,7 +55,7 @@ def vizualice(df):
     # set image size
     plt.figure(figsize=(12, 7))
     # set a title
-    plt.title("TF-IDF + KMeans 20newsgroup clustering",
+    plt.title("TF-IDF + KMeans Rest-Mex",
               fontdict={"fontsize": 18})
     # set axes names
     plt.xlabel("X0", fontdict={"fontsize": 16})
@@ -61,7 +66,7 @@ def vizualice(df):
 
 
 if __name__ == "__main__":
-    df = pd.read_csv('/content/rest_mex_2023_clustering_task/datasets/dataset_cleaned.csv', encoding='utf-8')
+    df = pd.read_csv('/content/dataset_cleaned.csv')
     # df = pd.read_csv('./datasets/dataset_translated.csv')
 
     # df['News'] = df['News'].apply(
