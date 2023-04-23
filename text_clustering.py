@@ -8,6 +8,7 @@ import matplotlib.pyplot as plt
 import seaborn as sns
 
 import pandas as pd
+import numpy as np
 # import text_preprocess
 
 
@@ -15,7 +16,7 @@ def tf_idf_vectorization(df):
     # initialize the vectorizer
     vectorizer = TfidfVectorizer(sublinear_tf=True, min_df=5, max_df=0.95)
     # fit_transform applies TF-IDF to clean texts - we save the array of vectors in X
-    X = vectorizer.fit_transform(df['cleaned'])
+    X = vectorizer.fit_transform(df['News'].apply(lambda x: np.str_(x)))
 
     return X
 
@@ -60,12 +61,14 @@ def vizualice(df):
 
 
 if __name__ == "__main__":
-    df = pd.read_csv('./datasets/dataset_cleaned.csv')
+    df = pd.read_csv('/content/rest_mex_2023_clustering_task/datasets/dataset_cleaned.csv', encoding='utf-8')
     # df = pd.read_csv('./datasets/dataset_translated.csv')
 
     # df['News'] = df['News'].apply(
     #    lambda x: text_preprocess.preprocess(x, remove_stopwords=True))
 
     X = tf_idf_vectorization(df)
-    text_clustering(df, X)
-    vizualice(X)
+    df_clustered = text_clustering(df, X)
+    vizualice(df_clustered)
+
+    df_clustered.to_csv('./datasets/dataset_clustered.csv', index=False)
