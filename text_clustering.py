@@ -16,11 +16,24 @@ import pandas as pd
 
 def tf_idf_vectorization(df):
     # initialize the vectorizer
-    vectorizer = TfidfVectorizer(sublinear_tf=True, min_df=5, max_df=0.95)
+    vectorizer = TfidfVectorizer(min_df=5, max_df=0.66)
     # fit_transform applies TF-IDF to clean texts - we save the array of vectors in X
     X = vectorizer.fit_transform(df['News'].astype('U').values)
 
     return X
+
+
+def lsa_func(X_tfidf):
+    lsa = make_pipeline(TruncatedSVD(n_components=100), Normalizer(copy=False))
+    #t0 = time()
+    X_lsa = lsa.fit_transform(X_tfidf)
+    #explained_variance = lsa[0].explained_variance_ratio_.sum()
+
+    #print(f"LSA done in {time() - t0:.3f} s")
+    #print(
+    #    f"Explained variance of the SVD step: {explained_variance * 100:.1f}%")
+
+    return X_lsa
 
 
 def text_clustering(df, X):
@@ -75,7 +88,8 @@ if __name__ == "__main__":
     #    lambda x: text_preprocess.preprocess(x, remove_stopwords=True))
 
     X = tf_idf_vectorization(df)
-    df_clustered = text_clustering(df, X)
+    X_lsa = lsa_func(X)
+    df_clustered = text_clustering(df, X_lsa)
     vizualice(df_clustered)
 
     print(df_clustered.head())
