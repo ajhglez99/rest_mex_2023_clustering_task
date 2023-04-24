@@ -2,13 +2,15 @@
 from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.cluster import KMeans
 from sklearn.decomposition import PCA
+from sklearn.decomposition import TruncatedSVD
+from sklearn.pipeline import make_pipeline
+from sklearn.preprocessing import Normalizer
 
 # viz libs
 import matplotlib.pyplot as plt
 import seaborn as sns
 
 import pandas as pd
-import numpy as np
 # import text_preprocess
 
 
@@ -16,14 +18,14 @@ def tf_idf_vectorization(df):
     # initialize the vectorizer
     vectorizer = TfidfVectorizer(sublinear_tf=True, min_df=5, max_df=0.95)
     # fit_transform applies TF-IDF to clean texts - we save the array of vectors in X
-    X = vectorizer.fit_transform(df['News'].apply(lambda x: np.str_(x)))
+    X = vectorizer.fit_transform(df['News'].astype('U').values)
 
     return X
 
 
 def text_clustering(df, X):
     # initialize kmeans with 3 centroids
-    kmeans = KMeans(n_clusters=5, random_state=42)
+    kmeans = KMeans(n_clusters=5, random_state=42, max_iter=100)
     # fit the model
     kmeans.fit(X)
     # store cluster labels in a variable
@@ -33,7 +35,7 @@ def text_clustering(df, X):
     # initialize PCA with 2 components
     pca = PCA(n_components=2, random_state=42)
     # pass our X to the pca and store the reduced vectors into pca_vecs
-    pca_vecs = pca.fit_transform(X.toarray())
+    pca_vecs = pca.fit_transform(X)
     # save our two dimensions into x0 and x1
     x0 = pca_vecs[:, 0]
     x1 = pca_vecs[:, 1]
@@ -76,4 +78,5 @@ if __name__ == "__main__":
     df_clustered = text_clustering(df, X)
     vizualice(df_clustered)
 
-    df_clustered.to_csv('./datasets/dataset_clustered.csv', index=False)
+    print(df_clustered.head())
+    df_clustered.to_csv('/content/dataset_classified.csv', index=False)
