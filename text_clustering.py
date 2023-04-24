@@ -93,4 +93,8 @@ if __name__ == "__main__":
     vizualice(df_clustered)
 
     print(df_clustered.head())
-    df_clustered.to_csv('/content/dataset_classified.csv', index=False)
+
+    df_clustered['task'] = 'thematic'
+    df_clustered = df_clustered[['task', 'ID','cluster']]
+    df_clustered.to_csv(
+        '/content/dataset_classified.txt', header=None, index=None, sep='\t')
