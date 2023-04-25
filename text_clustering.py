@@ -11,7 +11,6 @@ import matplotlib.pyplot as plt
 import seaborn as sns
 
 import pandas as pd
-# import text_preprocess
 
 
 def tf_idf_vectorization(df):
@@ -25,20 +24,14 @@ def tf_idf_vectorization(df):
 
 def lsa_func(X_tfidf):
     lsa = make_pipeline(TruncatedSVD(n_components=100), Normalizer(copy=False))
-    #t0 = time()
     X_lsa = lsa.fit_transform(X_tfidf)
-    #explained_variance = lsa[0].explained_variance_ratio_.sum()
-
-    #print(f"LSA done in {time() - t0:.3f} s")
-    #print(
-    #    f"Explained variance of the SVD step: {explained_variance * 100:.1f}%")
 
     return X_lsa
 
 
 def text_clustering(df, X):
     # initialize kmeans with 3 centroids
-    kmeans = KMeans(n_clusters=5, random_state=42, max_iter=100)
+    kmeans = KMeans(n_clusters=4, random_state=42, max_iter=100)
     # fit the model
     kmeans.fit(X)
     # store cluster labels in a variable
@@ -59,7 +52,7 @@ def text_clustering(df, X):
     df['x1'] = x1
 
     # map clusters to appropriate labels
-    cluster_map = {0: "1", 1: "2", 2: "3", 3: "4", 4: "5"}
+    cluster_map = {0: "1", 1: "2", 2: "3", 3: "4"}
     # apply mapping
     df['cluster'] = df['cluster'].map(cluster_map)
 
