@@ -1,3 +1,4 @@
+from numpy.random.mtrand import RandomState
 # import the dataset from sklearn
 from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.cluster import KMeans
@@ -5,17 +6,22 @@ from sklearn.decomposition import PCA
 from sklearn.decomposition import TruncatedSVD
 from sklearn.pipeline import make_pipeline
 from sklearn.preprocessing import Normalizer
+from sklearn.metrics.pairwise import euclidean_distances
 
 # viz libs
 import matplotlib.pyplot as plt
 import seaborn as sns
 
 import pandas as pd
+import numpy as np
+import csv
+
+N_CLUSTERS = 4
 
 
 def tf_idf_vectorization(df):
     # initialize the vectorizer
-    vectorizer = TfidfVectorizer(min_df=5, max_df=0.66)
+    vectorizer = TfidfVectorizer(min_df=5, max_df=0.95)
     # fit_transform applies TF-IDF to clean texts - we save the array of vectors in X
     X = vectorizer.fit_transform(df['News'].astype('U').values)
 
@@ -30,8 +36,8 @@ def lsa_func(X_tfidf):
 
 
 def text_clustering(df, X):
-    # initialize kmeans with 3 centroids
-    kmeans = KMeans(n_clusters=4, random_state=42, max_iter=100)
+    # initialize kmeans with 4 centroids
+    kmeans = KMeans(n_clusters=N_CLUSTERS, init="k-means++", max_iter=500)
     # fit the model
     kmeans.fit(X)
     # store cluster labels in a variable
@@ -88,6 +94,6 @@ if __name__ == "__main__":
     print(df_clustered.head())
 
     df_clustered['task'] = 'thematic'
-    df_clustered = df_clustered[['task', 'ID','cluster']]
+    df_clustered = df_clustered[['task', 'ID', 'cluster']]
     df_clustered.to_csv(
-        '/content/dataset_classified.txt', header=None, index=None, sep='\t')
+        '/content/dataset_classified.txt', header=None, index=None, sep='\t', quoting=csv.QUOTE_ALL)
