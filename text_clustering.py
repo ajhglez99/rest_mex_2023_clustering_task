@@ -43,6 +43,9 @@ def text_clustering(df, X):
     # store cluster labels in a variable
     clusters = kmeans.labels_
 
+    # distance between clusters
+    stats(kmeans)
+
     # dimensional_reduction
     # initialize PCA with 2 components
     pca = PCA(n_components=2, random_state=42)
@@ -77,6 +80,16 @@ def vizualice(df):
     # create scatter plot with seaborn, where hue is the class used to group the data
     sns.scatterplot(data=df, x='x0', y='x1', hue='cluster', palette="viridis")
     plt.show()
+
+
+def stats(kmeans):
+    dists = euclidean_distances(kmeans.cluster_centers_)
+
+    tri_dists = dists[np.triu_indices(N_CLUSTERS, 1)]
+    max_dist, avg_dist, min_dist = tri_dists.max(), tri_dists.mean(), tri_dists.min()
+    print(f"max dist {max_dist}")
+    print(f"avg dist {avg_dist}")
+    print(f"min dist {min_dist}")
 
 
 if __name__ == "__main__":
