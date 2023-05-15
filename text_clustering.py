@@ -1,4 +1,3 @@
-from numpy.random.mtrand import RandomState
 # import the dataset from sklearn
 from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.cluster import KMeans
@@ -12,9 +11,15 @@ from sklearn.metrics.pairwise import euclidean_distances
 import matplotlib.pyplot as plt
 import seaborn as sns
 
+# data management and utilities
+from numpy.random.mtrand import RandomState
 import pandas as pd
 import numpy as np
 import csv
+import logging
+
+# preprocess module
+import text_preprocess
 
 N_CLUSTERS = 4
 
@@ -36,15 +41,15 @@ def lsa_func(X_tfidf):
 
 
 def text_clustering(df, X):
-    # initialize kmeans with 4 centroids
+    # initialize kmeans
     kmeans = KMeans(n_clusters=N_CLUSTERS, init="k-means++", max_iter=500)
     # fit the model
     kmeans.fit(X)
     # store cluster labels in a variable
     clusters = kmeans.labels_
 
-    # distance between clusters
-    stats(kmeans)
+    # display distance between clusters
+    display_clusters_distance(kmeans)
 
     # dimensional_reduction
     # initialize PCA with 2 components
@@ -68,7 +73,7 @@ def text_clustering(df, X):
     return df
 
 
-def vizualice(df):
+def vizualice_clusters(df):
     # set image size
     plt.figure(figsize=(12, 7))
     # set a title
@@ -82,14 +87,15 @@ def vizualice(df):
     plt.show()
 
 
-def stats(kmeans):
+def display_clusters_distance(kmeans):
     dists = euclidean_distances(kmeans.cluster_centers_)
 
     tri_dists = dists[np.triu_indices(N_CLUSTERS, 1)]
     max_dist, avg_dist, min_dist = tri_dists.max(), tri_dists.mean(), tri_dists.min()
-    print(f"max dist {max_dist}")
-    print(f"avg dist {avg_dist}")
-    print(f"min dist {min_dist}")
+
+    logging.info(f"max distance between clusters {max_dist}")
+    logging.info(f"avg distance between clusters {avg_dist}")
+    logging.info(f"min distance between clusters {min_dist}")
 
 
 if __name__ == "__main__":
@@ -102,10 +108,11 @@ if __name__ == "__main__":
     X = tf_idf_vectorization(df)
     X_lsa = lsa_func(X)
     df_clustered = text_clustering(df, X_lsa)
-    vizualice(df_clustered)
+    vizualice_clusters(df_clustered)
 
-    print(df_clustered.head())
+    logging.info(df_clustered.head())
 
+    # output formating
     df_clustered['task'] = 'thematic'
     df_clustered = df_clustered[['task', 'ID', 'cluster']]
     df_clustered.to_csv(

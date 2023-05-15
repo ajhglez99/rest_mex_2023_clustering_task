@@ -1,4 +1,4 @@
-# string manipulation libs
+import logging
 import re
 import pandas as pd
 import nltk
@@ -42,11 +42,11 @@ def preprocess(text: str, remove_stopwords: bool) -> str:
     # return text in lower case and stripped of whitespaces
     text = text.lower().strip()
 
-    # debugging purpose
+    # # debugging purpose
     # global i
     # i += 1
     # if i % 1000 == 0:
-    #    print(i)
+    #    logging.debug(f'{i} rows of the dataset preprocessed')
 
     return text
 
@@ -58,7 +58,7 @@ if __name__ == "__main__":
     df["News"] = df["News"].apply(
         lambda x: preprocess(x, remove_stopwords=True))
 
-    # print(df.head())
+    logging.info(df.head())
 
     df.to_csv('./datasets/dataset_cleaned.csv', index=False)
     # df.to_csv('./datasets/test_cleaned.csv', index = False)
