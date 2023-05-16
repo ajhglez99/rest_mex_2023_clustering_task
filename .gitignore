@@ -1,0 +1,10 @@
+# misc
+*.[oa]
+*~
+*.xlsx
+*.csv
+*.log
+*.txt
+
+# IDE cache
+.vscode/
